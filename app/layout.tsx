@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { LangProvider } from "@/lib/lang-context";
 import "./globals.css";
 
 const geist = Geist({
@@ -9,7 +10,7 @@ const geist = Geist({
 
 export const metadata: Metadata = {
   title: "AI LP Generator",
-  description: "プロダクト情報を入力 → AIがLP用テキストを即座に生成",
+  description: "Enter product info → AI diagnoses your target market → generates high-converting LP copy.",
 };
 
 export default function RootLayout({
@@ -18,8 +19,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={`${geist.variable} h-full`}>
-      <body className="min-h-full">{children}</body>
+    <html lang="en" className={`${geist.variable} h-full`}>
+      <body className="min-h-full">
+        <LangProvider>{children}</LangProvider>
+      </body>
     </html>
   );
 }
