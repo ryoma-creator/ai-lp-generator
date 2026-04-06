@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { ToneSelector } from "@/components/form/ToneSelector";
 import { AudienceSuggester } from "@/components/form/AudienceSuggester";
@@ -11,7 +10,7 @@ import { useLang } from "@/lib/lang-context";
 import type { LPContent, Tone } from "@/types";
 
 interface GeneratorFormProps {
-  onGenerated: (data: LPContent, productName: string, productDescription: string) => void;
+  onGenerated: (data: LPContent, name: string, desc: string, audience: string, tone: string) => void;
   isLoggedIn: boolean;
 }
 
@@ -29,17 +28,9 @@ export function GeneratorForm({ onGenerated, isLoggedIn }: GeneratorFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-
-    if (!isLoggedIn) {
-      setError(t.loginRequired);
-      return;
-    }
-
+    if (!isLoggedIn) { setError(t.loginRequired); return; }
     const { ok, error: limitError } = consume();
-    if (!ok) {
-      setError(limitError ?? t.limitReached);
-      return;
-    }
+    if (!ok) { setError(limitError ?? t.limitReached); return; }
 
     setLoading(true);
     try {
@@ -48,14 +39,12 @@ export function GeneratorForm({ onGenerated, isLoggedIn }: GeneratorFormProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productName, productDescription, targetAudience, tone }),
       });
-
       if (!res.ok) {
         const data = await res.json() as { error: string };
         throw new Error(data.error);
       }
-
       const lpContent = await res.json() as LPContent;
-      onGenerated(lpContent, productName, productDescription);
+      onGenerated(lpContent, productName, productDescription, targetAudience, tone);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Generation failed");
     } finally {
@@ -64,10 +53,11 @@ export function GeneratorForm({ onGenerated, isLoggedIn }: GeneratorFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Input
-          label={t.productName}
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      {/* 商品名 + トーン */}
+      <div className="grid grid-cols-3 gap-3">
+        <input
+          className="col-span-2 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-all"
           placeholder={t.productNamePlaceholder}
           value={productName}
           onChange={(e) => setProductName(e.target.value)}
@@ -76,8 +66,9 @@ export function GeneratorForm({ onGenerated, isLoggedIn }: GeneratorFormProps) {
         <ToneSelector value={tone} onChange={setTone} />
       </div>
 
-      <Textarea
-        label={t.productDescription}
+      {/* 説明 */}
+      <textarea
+        className="w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-all"
         placeholder={t.productDescPlaceholder}
         value={productDescription}
         onChange={(e) => setProductDescription(e.target.value)}
@@ -85,13 +76,13 @@ export function GeneratorForm({ onGenerated, isLoggedIn }: GeneratorFormProps) {
         required
       />
 
+      {/* ターゲット層 */}
       <div className="flex flex-col gap-2">
-        <Textarea
-          label={t.targetAudienceOptional}
+        <input
+          className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-all"
           placeholder={t.targetAudiencePlaceholder}
           value={targetAudience}
           onChange={(e) => setTargetAudience(e.target.value)}
-          rows={2}
         />
         <AudienceSuggester
           productName={productName}
@@ -100,22 +91,23 @@ export function GeneratorForm({ onGenerated, isLoggedIn }: GeneratorFormProps) {
         />
       </div>
 
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-xs text-red-500">{error}</p>}
 
+      {/* フッター */}
       <div className="flex items-center justify-between pt-1">
-        <p className="text-xs text-gray-400">
-          {isLoggedIn
-            ? t.generationsLeft.replace("{n}", String(remaining))
-            : t.signInToGenerate}
-        </p>
+        {isLoggedIn && (
+          <p className="text-xs text-gray-400">
+            {t.generationsLeft.replace("{n}", String(remaining))}
+          </p>
+        )}
         {isLoggedIn ? (
-          <Button type="submit" loading={loading} size="lg">
+          <Button type="submit" loading={loading} size="lg" className="ml-auto">
             {t.generateBtn}
           </Button>
         ) : (
           <a
             href="/login"
-            className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-6 py-3 text-base font-medium text-white hover:bg-indigo-700 transition-colors"
+            className="ml-auto inline-flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 transition-colors"
           >
             {t.signInToGenerate}
           </a>

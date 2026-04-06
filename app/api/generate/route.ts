@@ -4,11 +4,10 @@ import type { LPContent, Tone } from "@/types";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-// トーンの説明文
 const toneDescriptions: Record<Tone, string> = {
   professional: "authoritative and trustworthy, data-driven, formal",
   casual: "conversational and relatable, like talking to a friend",
-  urgent: "time-sensitive, emphasize urgency and FOMO, strong action words",
+  urgent: "time-sensitive, strong action words, emphasize FOMO",
   friendly: "warm, encouraging, and supportive",
   luxury: "premium and exclusive, sophisticated, aspirational",
 };
@@ -24,59 +23,71 @@ export async function POST(req: NextRequest) {
     };
 
   if (!productName || !productDescription) {
-    return NextResponse.json({ error: "入力が不足しています" }, { status: 400 });
+    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  const audienceText = targetAudience?.trim()
-    ? targetAudience.trim()
-    : "general audience — infer from product description";
+  const audienceText = targetAudience?.trim() || "infer from product description";
 
-  const prompt = `You are an expert marketing copywriter and conversion rate specialist. Generate high-converting landing page copy using proven psychological principles (social proof, loss aversion, specificity, benefit-focused messaging).
+  const prompt = `You are an expert conversion copywriter. Generate a complete, build-ready landing page brief.
 
-Product:
-Name: ${productName}
+Product: ${productName}
 Description: ${productDescription}
 Target Audience: ${audienceText}
 Tone: ${tone} — ${toneDescriptions[tone]}
 
 Rules:
-- Focus on BENEFITS over features
-- Use specific, concrete language (avoid vague words like "powerful", "easy", "great")
-- Apply psychological triggers appropriate for the tone and audience
-- For each key copy element, include a 1-sentence explanation of WHY it converts
+- Benefits over features. Specific over vague. No filler words.
+- Headline variants must each use a DISTINCT psychological angle.
+- SEO fields must be within character limits (title ≤60, description ≤155).
+- Layout sections array uses these names only: "Hero", "Social Proof", "Features", "How It Works", "FAQ", "Pricing", "CTA"
 
-Return ONLY valid JSON in this exact format:
+Return ONLY valid JSON:
 
 {
-  "headline": "",
-  "headlineReason": "Why this headline converts (e.g., 'Uses loss aversion — highlights what users miss without this')",
-  "subheadline": "",
-  "subheadlineReason": "Why this subheadline converts (1 sentence)",
-  "cta": "",
+  "headline": "[recommended headline]",
+  "headlineReason": "[why this angle converts — 1 sentence]",
+  "headlineVariants": [
+    { "text": "...", "angle": "Loss Aversion", "reason": "...", "recommended": true },
+    { "text": "...", "angle": "Benefit-First", "reason": "...", "recommended": false },
+    { "text": "...", "angle": "Curiosity", "reason": "...", "recommended": false }
+  ],
+  "subheadline": "...",
+  "subheadlineReason": "...",
+  "cta": "...",
   "features": [
-    { "title": "", "description": "", "reason": "Why this resonates with the target audience (1 sentence)" },
-    { "title": "", "description": "", "reason": "..." },
-    { "title": "", "description": "", "reason": "..." }
+    { "title": "...", "description": "...", "reason": "..." },
+    { "title": "...", "description": "...", "reason": "..." },
+    { "title": "...", "description": "...", "reason": "..." }
   ],
   "steps": [
-    { "title": "", "description": "" },
-    { "title": "", "description": "" },
-    { "title": "", "description": "" }
+    { "title": "...", "description": "..." },
+    { "title": "...", "description": "..." },
+    { "title": "...", "description": "..." }
   ],
-  "finalCta": "",
-  "finalCtaReason": "Why this final CTA converts (1 sentence)"
+  "finalCta": "...",
+  "finalCtaReason": "...",
+  "seo": {
+    "metaTitle": "... (≤60 chars)",
+    "metaDescription": "... (≤155 chars)",
+    "ogTitle": "...",
+    "ogDescription": "..."
+  },
+  "layout": {
+    "sections": ["Hero", "Features", "How It Works", "CTA"],
+    "reasoning": "... (1-2 sentences explaining why this order for this audience)"
+  }
 }`;
 
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     messages: [{ role: "user", content: prompt }],
     response_format: { type: "json_object" },
-    max_tokens: 1500,
+    max_tokens: 2000,
   });
 
   const content = completion.choices[0].message.content;
   if (!content) {
-    return NextResponse.json({ error: "生成に失敗しました" }, { status: 500 });
+    return NextResponse.json({ error: "Generation failed" }, { status: 500 });
   }
 
   const lpContent = JSON.parse(content) as LPContent;
