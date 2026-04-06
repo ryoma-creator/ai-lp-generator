@@ -1,5 +1,6 @@
 "use client";
 
+import { Lightbulb } from "lucide-react";
 import { useLang } from "@/lib/lang-context";
 
 interface CtaSectionProps {
@@ -18,8 +19,9 @@ export function CtaSection({ finalCta, finalCtaReason }: CtaSectionProps) {
         <h2 className="text-2xl font-bold sm:text-3xl">{t.ctaTitle}</h2>
         <p className="max-w-2xl text-indigo-100">{finalCta}</p>
         {finalCtaReason && (
-          <p className="rounded-md border border-white/15 bg-black/15 px-3 py-1 text-xs italic text-indigo-100">
-            💡 {finalCtaReason}
+          <p className="flex items-start gap-1.5 rounded-md border border-white/15 bg-black/15 px-3 py-1 text-left text-xs italic text-indigo-100 sm:text-center">
+            <Lightbulb className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-200/90" aria-hidden />
+            <span>{finalCtaReason}</span>
           </p>
         )}
         <button className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-3 font-semibold text-indigo-700 shadow-lg shadow-indigo-950/30 transition-all hover:-translate-y-0.5 hover:bg-indigo-50">

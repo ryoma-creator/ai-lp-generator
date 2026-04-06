@@ -1,3 +1,5 @@
+import { Lightbulb } from "lucide-react";
+
 // ヒーローセクションコンポーネント
 interface HeroSectionProps {
   headline: string;
@@ -19,14 +21,16 @@ export function HeroSection({ headline, headlineReason, subheadline, subheadline
           </span>
           <h1 className="text-3xl font-bold leading-tight sm:text-4xl md:text-5xl">{headline}</h1>
           {headlineReason && (
-            <p className="rounded-lg border border-white/15 bg-black/15 px-3 py-1 text-xs italic text-indigo-100">
-              💡 {headlineReason}
+            <p className="flex items-start gap-1.5 rounded-lg border border-white/15 bg-black/15 px-3 py-1 text-xs italic text-indigo-100">
+              <Lightbulb className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-200/90" aria-hidden />
+              <span>{headlineReason}</span>
             </p>
           )}
           <p className="max-w-xl text-lg text-indigo-100 sm:text-xl">{subheadline}</p>
           {subheadlineReason && (
-            <p className="rounded-lg border border-white/15 bg-black/15 px-3 py-1 text-xs italic text-indigo-100">
-              💡 {subheadlineReason}
+            <p className="flex items-start gap-1.5 rounded-lg border border-white/15 bg-black/15 px-3 py-1 text-xs italic text-indigo-100">
+              <Lightbulb className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-200/90" aria-hidden />
+              <span>{subheadlineReason}</span>
             </p>
           )}
           <button className="mt-2 inline-flex items-center gap-2 rounded-full bg-white px-8 py-3 text-base font-semibold text-indigo-700 shadow-lg shadow-indigo-950/30 transition-all hover:-translate-y-0.5 hover:bg-indigo-50 sm:text-lg">

@@ -1,8 +1,9 @@
 "use client";
 
-import { Sparkles, History } from "lucide-react";
+import { Globe, History, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useLang } from "@/lib/lang-context";
+import type { Lang } from "@/lib/i18n";
 import { LANGUAGES } from "@/lib/i18n";
 
 interface HeaderProps {
@@ -24,21 +25,21 @@ export function Header({ user }: HeaderProps) {
         </div>
 
         <nav className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
-          {/* 言語切替ボタン */}
-          <div className="flex items-center gap-0.5">
-            {LANGUAGES.map((l) => (
-              <button
-                key={l.code}
-                onClick={() => setLang(l.code)}
-                className={`rounded px-2 py-1 text-xs font-medium transition-colors ${
-                  lang === l.code
-                    ? "bg-indigo-600 text-white shadow-sm"
-                    : "text-gray-500 hover:bg-indigo-50 hover:text-indigo-600"
-                }`}
-              >
-                {l.label}
-              </button>
-            ))}
+          {/* 言語は1つのセレクトに集約 */}
+          <div className="flex items-center gap-1.5">
+            <Globe className="h-4 w-4 shrink-0 text-gray-500" aria-hidden />
+            <select
+              value={lang}
+              onChange={(e) => setLang(e.target.value as Lang)}
+              aria-label={t.languageAria}
+              className="max-w-[5.5rem] cursor-pointer rounded-lg border border-gray-200 bg-white py-1.5 pl-2 pr-7 text-xs font-medium text-gray-800 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 sm:max-w-none sm:pr-8"
+            >
+              {LANGUAGES.map((l) => (
+                <option key={l.code} value={l.code}>
+                  {l.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           {user ? (

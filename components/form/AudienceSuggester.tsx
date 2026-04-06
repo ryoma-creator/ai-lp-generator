@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useRateLimit } from "@/hooks/useRateLimit";
 import { useLang } from "@/lib/lang-context";
@@ -53,7 +54,10 @@ export function AudienceSuggester({ productName, productDescription, onSelect }:
   return (
     <div className="flex flex-col gap-2">
       <Button type="button" variant="outline" size="sm" loading={loading} onClick={handleSuggest}>
-        {t.suggestAudienceBtn}
+        <span className="inline-flex items-center gap-1.5">
+          <Lightbulb className="h-3.5 w-3.5 shrink-0 text-indigo-500" aria-hidden />
+          {t.suggestAudienceBtn}
+        </span>
       </Button>
 
       {error && <p className="text-xs text-red-500">{error}</p>}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Zap, Shield, Star } from "lucide-react";
+import { Lightbulb, Shield, Star, Zap } from "lucide-react";
 import { useLang } from "@/lib/lang-context";
 import type { Feature } from "@/types";
 
@@ -34,8 +34,9 @@ export function FeaturesSection({ features }: FeaturesSectionProps) {
                 <h3 className="mb-2 font-semibold text-gray-900">{feature.title}</h3>
                 <p className="text-sm leading-relaxed text-gray-600">{feature.description}</p>
                 {feature.reason && (
-                  <p className="mt-3 rounded-md border border-amber-100 bg-amber-50 px-2 py-1 text-xs italic text-amber-700">
-                    💡 {feature.reason}
+                  <p className="mt-3 flex items-start gap-1.5 rounded-md border border-amber-100 bg-amber-50 px-2 py-1 text-xs italic text-amber-700">
+                    <Lightbulb className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-600" aria-hidden />
+                    <span>{feature.reason}</span>
                   </p>
                 )}
               </div>
