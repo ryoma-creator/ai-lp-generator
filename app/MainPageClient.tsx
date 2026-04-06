@@ -105,15 +105,12 @@ export function MainPageClient({ isLoggedIn, userId }: MainPageClientProps) {
         <h1 className="mb-2 text-3xl font-bold text-gray-900 sm:text-4xl">
           {t.pageTitle}
         </h1>
-        <p className="mx-auto max-w-3xl text-sm leading-relaxed text-gray-600 sm:text-base">
-          {t.pageSubtitle}
-        </p>
+        <HowItWorksModal />
       </div>
-
-      <HowItWorksModal />
 
       {/* 入力フォームカード */}
       <div className="rounded-3xl bg-white p-6 shadow-md sm:p-8">
+        <h2 className="mb-5 text-lg font-semibold text-gray-900">{t.inputSectionTitle}</h2>
         <GeneratorForm onGenerated={handleGenerated} isLoggedIn={isLoggedIn} />
       </div>
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { ToneSelector } from "@/components/form/ToneSelector";
 import { AudienceSuggester } from "@/components/form/AudienceSuggester";
@@ -55,20 +56,24 @@ export function GeneratorForm({ onGenerated, isLoggedIn }: GeneratorFormProps) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
       {/* 商品名 + トーン */}
-      <div className="grid grid-cols-3 gap-3">
-        <input
-          className="col-span-2 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-all"
-          placeholder={t.productNamePlaceholder}
-          value={productName}
-          onChange={(e) => setProductName(e.target.value)}
-          required
-        />
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="sm:col-span-2">
+          <Input
+            label={t.productName}
+            className="rounded-xl border-gray-200 bg-gray-50 px-4 py-2.5 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100"
+            placeholder={t.productNamePlaceholder}
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+            required
+          />
+        </div>
         <ToneSelector value={tone} onChange={setTone} />
       </div>
 
       {/* 説明 */}
-      <textarea
-        className="w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-all"
+      <Textarea
+        label={t.productDescription}
+        className="rounded-xl border-gray-200 bg-gray-50 px-4 py-2.5 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100"
         placeholder={t.productDescPlaceholder}
         value={productDescription}
         onChange={(e) => setProductDescription(e.target.value)}
@@ -78,8 +83,9 @@ export function GeneratorForm({ onGenerated, isLoggedIn }: GeneratorFormProps) {
 
       {/* ターゲット層 */}
       <div className="flex flex-col gap-2">
-        <input
-          className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm placeholder:text-gray-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-all"
+        <Input
+          label={t.targetAudienceOptional}
+          className="rounded-xl border-gray-200 bg-gray-50 px-4 py-2.5 focus:border-indigo-400 focus:bg-white focus:ring-2 focus:ring-indigo-100"
           placeholder={t.targetAudiencePlaceholder}
           value={targetAudience}
           onChange={(e) => setTargetAudience(e.target.value)}
@@ -101,7 +107,12 @@ export function GeneratorForm({ onGenerated, isLoggedIn }: GeneratorFormProps) {
           </p>
         )}
         {isLoggedIn ? (
-          <Button type="submit" loading={loading} size="lg" className="ml-auto">
+          <Button
+            type="submit"
+            loading={loading}
+            size="lg"
+            className="ml-auto rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-fuchsia-600 px-7 shadow-md shadow-indigo-200 hover:from-indigo-500 hover:via-violet-500 hover:to-fuchsia-500"
+          >
             {t.generateBtn}
           </Button>
         ) : (
